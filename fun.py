@@ -1,7 +1,7 @@
 import numpy as np
 
 def para_one_hot(msg: str):
-    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    alphabet = "abcdefghijklmnopqrstuvwxyz "
     char_to_index = {}
 
     for i, char in enumerate(alphabet):
@@ -17,7 +17,7 @@ def para_one_hot(msg: str):
 
 
 def para_string(M: np.array):
-    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    alphabet = "abcdefghijklmnopqrstuvwxyz "
     msg = ""
     for i in range(M.shape[1]):   # iterar através das colunas (caracteres) da matriz
         indices = np.where(M[:,i] == 1)[0]  # encontra os índices dos elementos igual a 1 na coluna atual
@@ -31,26 +31,33 @@ def para_string(M: np.array):
 def cifrar(msg:str, P:np.array):
     M = para_one_hot(msg)
     C = np.dot(P, M)
-    return C
+
+    return para_string(C)
     
 
-def de_cifrar(C:np.array, P:np.array):
+def de_cifrar(msg: str, P:np.array):
     P_INV = np.linalg.inv(P)
+    C = para_one_hot(msg)
     M_DECIFRADA = np.dot(P_INV, C)
     msg = para_string(M_DECIFRADA)
     return msg
 
 def enigma(msg:str, P:np.array, E:np.array):
+    alphabet = "abcdefghijklmnopqrstuvwxyz "
     M = para_one_hot(msg)
-    C = cifrar(msg, P)
-    D = cifrar(C, E)
+    matriz_zerada = np.zeros((len(alphabet),len(msg)))
+    for i in range(len(msg)):
+        matriz_zerada[:,i] = (np.linalg.matrix_power(E,i))@P@M[:,i]
 
-    return D
+    return para_string(matriz_zerada)
 
-def de_enigma(D:np.array, P:np.array, E:np.array):
-    P_INV = np.linalg.inv(P)
-    E_INV = np.linalg.inv(E)
-    C = cifrar(D, E_INV)
-    M = cifrar(C, P_INV)
-    msg = para_string(M)
-    return msg
+
+
+def de_enigma(msg:str, P:np.array, E:np.array):
+    alphabet = "abcdefghijklmnopqrstuvwxyz "
+    M = para_one_hot(msg)
+    matriz_zerada = np.zeros((len(alphabet),len(msg)))
+    for i in range(len(msg)):
+        matriz_zerada[:,i] = np.linalg.inv(P)@(np.linalg.matrix_power(E,-i))@M[:,i]
+
+    return para_string(matriz_zerada)
