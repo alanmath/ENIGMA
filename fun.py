@@ -72,6 +72,8 @@ def enigma(msg:str, seed:int = 40):
     que é cifrado por um alfabeto auxiliar, a cada substituição.
 
     """
+
+    ## Criação do alfabeto cifrador e do alfabeto auxiliar
     random.seed(seed)
     alfabeto_cifrador = list(alphabet)
     random.shuffle(list(alfabeto_cifrador))
@@ -81,15 +83,19 @@ def enigma(msg:str, seed:int = 40):
     random.shuffle(cifrador_aux)
     cifrador_aux = "".join(cifrador_aux)
 
+    ## Transformação da mensagem e alfabetos em matriz one-hot
     M = para_one_hot(msg)
     P = para_one_hot(alfabeto_cifrador)
     E = para_one_hot(cifrador_aux)
 
-    matriz_zerada = np.zeros((len(alphabet),len(msg)))
-    for i in range(len(msg)):
-        matriz_zerada[:,i] = (np.linalg.matrix_power(E,i))@P@M[:,i]
+    matriz_resposta = np.zeros((len(alphabet),len(msg)))
 
-    return para_string(matriz_zerada)
+    ## Aplicação do algoritmo
+    ## Segue a formula: R = E^i * P * M
+    for i in range(len(msg)):
+        matriz_resposta[:,i] = (np.linalg.matrix_power(E,i))@P@M[:,i]
+
+    return para_string(matriz_resposta)
 
 
 
@@ -110,8 +116,8 @@ def de_enigma(msg:str, seed:int = 40):
     P = para_one_hot(alfabeto_cifrador)
     E = para_one_hot(cifrador_aux)
 
-    matriz_zerada = np.zeros((len(alphabet),len(msg)))
+    matriz_resposta = np.zeros((len(alphabet),len(msg)))
     for i in range(len(msg)):
-        matriz_zerada[:,i] = np.linalg.inv(P)@(np.linalg.matrix_power(E,-i))@M[:,i]
+        matriz_resposta[:,i] = np.linalg.inv(P)@(np.linalg.matrix_power(E,-i))@M[:,i]
 
-    return para_string(matriz_zerada)
+    return para_string(matriz_resposta)
