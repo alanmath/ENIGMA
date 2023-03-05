@@ -1,32 +1,62 @@
-from flask import Flask, render_template, request
-from fun import cifrar, de_cifrar, enigma, de_enigma
+from flask import Flask, request, jsonify
+from views import enigma, de_enigma
 
 app = Flask(__name__)
 
-# Rota para a página inicial
-@app.route('/')
-def index():
-    return render_template('index.html')
-    
 
 # Rota para a página do enigma
-@app.route('/enigma', methods=['GET', 'POST'])
+@app.route('/enigma', methods=['POST'])
 def enigma_view():
-    if request.method == 'POST':
-        msg = request.form['msg']
-        # Criar o P e o E aqui e passar para a função enigma
-        # cifrada = enigma(msg)
-        return render_template('enigma.html', cifrada=msg)
-    return render_template('enigma.html')
+    json_data = request.get_json()
+
+    # Check if 'msg' field is present
+    if 'msg' not in json_data:
+        return jsonify({'error': 'No "msg" field present in request'}), 400
+    
+    msg = json_data['msg']
+    
+    # Get 'seed' field if present
+    if 'seed' in json_data:
+        seed = json_data['seed']
+    else:
+        seed = None
+    
+    # Process the received data
+    msg = enigma(msg, seed)
+    
+    # Return a response
+    response = {'msg': msg}
+    if seed is not None:
+        response['seed'] = seed
+    
+    return jsonify(response), 200
 
 # Rota para a página de decifrar o enigma
-@app.route('/de_enigma', methods=['GET', 'POST'])
+@app.route('/de-enigma', methods=['POST'])
 def de_enigma_view():
-    if request.method == 'POST':
-        msg = request.form['msg']
-        decifrada = de_enigma(msg)
-        return render_template('de_enigma.html', decifrada=decifrada)
-    return render_template('de_enigma.html')
+    json_data = request.get_json()
+
+    # Check if 'msg' field is present
+    if 'msg' not in json_data:
+        return jsonify({'error': 'No "msg" field present in request'}), 400
+    
+    msg = json_data['msg']
+    
+    # Get 'seed' field if present
+    if 'seed' in json_data:
+        seed = json_data['seed']
+    else:
+        seed = None
+    
+    # Process the received data
+    msg = de_enigma(msg, seed)
+    
+    # Return a response
+    response = {'msg': msg}
+    if seed is not None:
+        response['seed'] = seed
+    
+    return jsonify(response), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

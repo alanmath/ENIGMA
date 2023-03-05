@@ -23,7 +23,7 @@ from fun import *
 
 
 
-x = enigma("O bolo, de chocolate, fica pronto às quatro horas da tarde. (Esteja em casa!)", 20)
+x = enigma("O bolo, de chocolate, fica pronto às quatro horas 9987989   pçlkd .oia da tarde. (Esteja em casa!)", 20)
 print(x)
 
 y = de_enigma(x, 20)

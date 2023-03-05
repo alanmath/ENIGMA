@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-alphabet = "abcdefghijklmnopqrstuvwxyz0123456789.,;:!?()[]{}-+*/=<>@#$%&'\" "
+alphabet = "abcdefghijklmnopqrstuvwxyz0123456789.,;:!?()[]{}-+*/=<>@#$%&'\"áàéíóúâêûôãõ "
 
 def para_one_hot(msg: str):
     """
