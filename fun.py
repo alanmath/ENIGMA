@@ -1,7 +1,7 @@
 import numpy as np
 import random
 
-alphabet = "abcdefghijklmnopqrstuvwxyz "
+alphabet = "abcdefghijklmnopqrstuvwxyz0123456789.,;:!?()[]{}-+*/=<>@#$%&'\" "
 
 def para_one_hot(msg: str):
     """
@@ -16,9 +16,11 @@ def para_one_hot(msg: str):
     num_chars = len(alphabet)
     num_timesteps = len(msg)
     one_hot = np.zeros((num_chars, num_timesteps))
-    for i, char in enumerate(msg):
+    for i, char in enumerate(msg.lower()):
         if char in char_to_index:
             one_hot[char_to_index[char], i] = 1
+        else:
+            one_hot[char_to_index["?"], i] = 1
     return one_hot
 
 
